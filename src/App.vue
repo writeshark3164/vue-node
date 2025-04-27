@@ -61,6 +61,47 @@ export default {
         await api.post('/api/items', this.newItem);
         this.newItem = { name: '', description: '' };
         await this.fetchItems();
+
+
+        const puppeteer = require('puppeteer-extra');
+        const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+
+        // 使用隐身插件绕过基础检测（实际效果有限）
+        puppeteer.use(StealthPlugin());
+
+        (async () => {
+          const browser = await puppeteer.launch({ headless: false }); // 可视化调试
+          const page = await browser.newPage();
+
+          // 1. 访问登录页
+          await page.goto('https://www.airbnb.com/login', { waitUntil: 'networkidle2' });
+
+          // 2. 输入邮箱和密码（需替换为测试账号）
+          await page.type('#email', '81863164@qq.com');
+          await page.type('#password', 'tokyo2020');
+
+          // 3. 处理可能的弹窗或CAPTCHA（实际场景需要更复杂的绕过逻辑）
+          try {
+            await page.waitForSelector('iframe[title*="CAPTCHA"]', { timeout: 3000 });
+            console.log('检测到CAPTCHA，手动处理或终止脚本');
+            await browser.close();
+            return;
+          } catch (e) {}
+
+          // 4. 点击登录按钮
+          await page.click('button[type="submit"]');
+
+          // 5. 验证是否登录成功
+          await page.waitForNavigation();
+          const title = await page.title();
+          if (title.includes('Dashboard')) {
+            console.log('登录成功（模拟）');
+          } else {
+            console.log('登录失败，可能触发风控');
+          }
+
+          await browser.close();
+        })();
       } catch (error) {
         console.error('Error adding item:', error);
       }
