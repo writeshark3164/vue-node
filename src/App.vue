@@ -43,15 +43,12 @@ export default {
       baseURL: 'https://vue-node-demo-backend.onrender.com' // 替换为您的后端服务 URL
     });
 
-    // 然后使用 api 代替 axios
-    await api.get('/api/items');
-    await api.post('/api/items', this.newItem);
     await this.fetchItems();
   },
   methods: {
     async fetchItems() {
       try {
-        const response = await axios.get('/api/items');
+        const response = await api.get('/api/items');
         this.items = response.data;
         this.loading = false;
       } catch (error) {
@@ -63,7 +60,7 @@ export default {
       if (!this.newItem.name) return;
       
       try {
-        await axios.post('/api/items', this.newItem);
+        await api.post('/api/items', this.newItem);
         this.newItem = { name: '', description: '' };
         await this.fetchItems();
       } catch (error) {
