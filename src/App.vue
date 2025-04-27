@@ -24,6 +24,9 @@
 
 <script>
 import axios from 'axios';
+const api = axios.create({
+  baseURL: 'https://vue-node-demo-backend.onrender.com'
+});
 
 export default {
   name: 'App',
@@ -38,11 +41,6 @@ export default {
     };
   },
   async created() {
-    // 在 created() 或 methods 中添加基础 URL
-    const api = axios.create({
-      baseURL: 'https://vue-node-demo-backend.onrender.com' // 替换为您的后端服务 URL
-    });
-
     await this.fetchItems();
   },
   methods: {
